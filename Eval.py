@@ -1,5 +1,21 @@
 def Eval(string_operation):
-    # 2*(3+5*2)/6*3-15
+    # 2*3+5/6*3-15 = -6.5
+    # 2*(3+5*2)/6*3-15 = -2
+    # 23+3*(6+5*(5*2+6)) = 281
+
+    if "(" in string_operation:
+        open_idx = string_operation.index("(")
+        close_idx = string_operation.rindex(")")
+
+        inner_expression = string_operation[open_idx + 1 : close_idx]
+
+        inner_result = Eval(inner_expression)
+        string_operation = (
+            string_operation[:open_idx]
+            + str(inner_result)
+            + string_operation[close_idx + 1 :]
+        )
+        return Eval(string_operation)
 
     if "+" in string_operation:
         operations_to_sum = string_operation.split("+")
@@ -15,11 +31,10 @@ def Eval(string_operation):
     
     if "*" in string_operation:
         operations_to_mul = string_operation.split("*")
+        res = 1
         for i in range(len(operations_to_mul)):
             operations_to_mul[i] = Eval(operations_to_mul[i])
-            res = 1
-            for j in operations_to_mul:
-                res *= float(j)
+            res *= float(operations_to_mul[i])
         return res
     
     if "/" in string_operation:
@@ -28,7 +43,6 @@ def Eval(string_operation):
         for i in range(1, len(operations_to_div)):
             res /= float(operations_to_div[i])
         return res
-    
     return float(string_operation)
 
-print(Eval("2*3+5/6*3-15"))
+print(Eval("23+3*(6+5*(5*2+6))"))
